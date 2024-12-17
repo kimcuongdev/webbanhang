@@ -1,0 +1,31 @@
+{% extends "app/base.html" %}
+{% block staff_manage %}
+<div class="container mt-5">
+    <h2>Quản lý nhân viên</h2>
+    <form method="post" action="{% url 'staff_manage' %}">
+        {% csrf_token %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Quyền</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>
+                        <select name="permissions_{{ user.id }}" class="form-select">
+                            <option value="" {% if not user.is_superuser %}selected{% endif %}>Không có</option>
+                            <option value="manager" {% if user.is_superuser %}selected{% endif %}>Quản lý</option>
+                        </select>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">Cập nhật</button>
+    </form>
+</div>
+{% endblock staff_manage %}

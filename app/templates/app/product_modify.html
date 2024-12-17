@@ -1,0 +1,40 @@
+{% extends "app/base.html" %}
+{% block product_modify %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <span class="navbar-brand">Chỉnh sửa thông tin mặt hàng: {{ product.name }}</span>
+    </div>
+</nav>
+
+<div class="container">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="category" class="form-label fs-5">Danh mục mặt hàng</label>
+            <select id="category" name="category" class="form-select">
+                {% for category in product.category.all %}
+                    <option value="{{ category.id }}" selected>{{ category.name }}</option>
+                {% endfor %}
+                {% for other_category in other_categories %}
+                    <option value="{{ other_category.id }}">{{ other_category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="price" class="form-label fs-5">Giá tiền</label>
+            <input type="number" id="price" name="price" class="form-control" value="{{ product.price }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="image" class="form-label fs-5">Ảnh</label>
+            <div class="mb-2">
+                <img src="{{ product.ImageURL }}" alt="Product Image" class="img-thumbnail" style="max-width: 200px;">
+            </div>
+            <input type="file" id="image" name="image" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary fs-5">Xác nhận</button>
+    </form>
+</div>
+{% endblock product_modify %}

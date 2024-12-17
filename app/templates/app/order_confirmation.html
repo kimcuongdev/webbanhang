@@ -1,0 +1,8 @@
+{% extends 'app/base.html' %}
+{% block order_confirmation %}
+<div class="d-flex align-items-center flex-column" style="height: 100vh;">
+    <h2 class="mb-3">Cảm ơn bạn đã đặt hàng!</h2>
+    <p class="mb-3">Chúng tôi sẽ liên hệ với bạn sớm để xác nhận đơn hàng.</p>
+    <a href="{% url 'home' %}" class="btn btn-warning">Quay về trang chủ</a>
+</div>
+{% endblock order_confirmation %}

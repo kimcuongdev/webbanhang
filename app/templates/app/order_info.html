@@ -1,0 +1,64 @@
+{% extends "app/base.html" %}
+{% block order_info %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand">Thông tin đơn hàng</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link {% if slug == 'tat-ca' %}active{% endif %}" href="{% url 'order_info' 'tat-ca' %}">Tất cả</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if slug == 'chua-hoan-thanh' %}active{% endif %}" href="{% url 'order_info' 'chua-hoan-thanh' %}">Chưa hoàn thành</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if slug == 'cho-xac-nhan' %}active{% endif %}" href="{% url 'order_info' 'cho-xac-nhan' %}">Chờ xác nhận</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if slug == 'cho-giao-hang' %}active{% endif %}" href="{% url 'order_info' 'cho-giao-hang' %}">Chờ giao hàng</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if slug == 'da-hoan-thanh' %}active{% endif %}" href="{% url 'order_info' 'da-hoan-thanh' %}">Đã hoàn thành</a>
+                </li>
+            </ul>            
+        </div>
+    </div>
+</nav>
+<div class="container mt-4">
+    {% for order in order_data %}
+    <div class="card mb-4">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <span class="d-flex align-items-center">
+                <strong>Tổng thanh toán: </strong>
+                <strong class="text-danger ms-2">{{ order.total|floatformat:2 }}đ</strong>
+            </span>
+            <p class="{{ order.status_class }} mb-0">{{ order.status }}</p>
+        </div>
+        <div class="card-body">
+            {% for item in order.items %}
+            <div class="row align-items-center mb-3">
+                <div class="col-md-2">
+                    <img src="{{ item.image_url }}" alt="Sản phẩm" class="img-fluid">
+                </div>
+                <div class="col-md-7">
+                    <h5>{{ item.product_name }}</h5>
+                    <p class="text-muted">Số lượng: x{{ item.quantity }}</p>
+                    <p>Thành tiền: <strong class="text-danger">{{ item.total_price|floatformat:2 }}đ</strong></p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="card-footer bg-light d-flex justify-content-between align-items-center">
+            <span class="d-flex align-items-center">
+                <strong>Người nhận: </strong>
+                <strong class="text-success ms-2">{{ order.receiver}}</strong>
+            </span>
+            <p class=" mb-0">{{ order.date_order }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock order_info %}

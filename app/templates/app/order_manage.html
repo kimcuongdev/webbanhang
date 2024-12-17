@@ -1,0 +1,144 @@
+{% extends "app/base.html" %}
+{% block order_manage %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand">Quản lý đơn hàng</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link {% if slug == 'tat-ca' %}active{% endif %}" href="{% url 'order_manage' 'tat-ca' %}">Tất cả</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if slug == 'cho-xac-nhan' %}active{% endif %}" href="{% url 'order_manage' 'cho-xac-nhan' %}">Chờ xác nhận</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if slug == 'cho-giao-hang' %}active{% endif %}" href="{% url 'order_manage' 'cho-giao-hang' %}">Chờ giao hàng</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if slug == 'da-hoan-thanh' %}active{% endif %}" href="{% url 'order_manage' 'da-hoan-thanh' %}">Đã hoàn thành</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Lọc và sắp xếp -->
+<div class="container mt-4">
+    <form method="POST" action="{% url 'order_manage' slug %}" class="row align-items-end mb-4">
+        {% csrf_token %}
+        
+        <div class="col-md-3 mb-3 mb-md-0">
+            <label for="start_date" class="form-label">Ngày bắt đầu</label>
+            <input type="date" id="start_date" name="start_date" class="form-control" value="{{ request.GET.start_date }}">
+        </div>
+        <div class="col-md-3 mb-3 mb-md-0">
+            <label for="end_date" class="form-label">Ngày kết thúc</label>
+            <input type="date" id="end_date" name="end_date" class="form-control" value="{{ request.GET.end_date }}">
+        </div>
+        <div class="col-md-3 mb-3 mb-md-0">
+            <label for="sort_by" class="form-label">Sắp xếp theo</label>
+            <select id="sort_by" name="sort_by" class="form-select">
+                <option value="newest" {% if request.GET.sort_by == 'newest' %}selected{% endif %}>Mới nhất</option>
+                <option value="oldest" {% if request.GET.sort_by == 'oldest' %}selected{% endif %}>Cũ nhất</option>
+            </select>
+        </div>
+        <div class="col-md-3 mb-3">
+            <!-- Cột 4 trống hàng 1 -->
+        </div>
+        
+        <div class="col-md-3 mb-3 mb-md-0">
+            <label for="account" class="form-label">Tài khoản thực hiện</label>
+            <input type="text" id="account" name="account" class="form-control" placeholder="Nhập tài khoản">
+        </div>
+        <div class="col-md-3 mb-3 mb-md-0">
+            <label for="receiver" class="form-label">Người nhận</label>
+            <input type="text" id="receiver" name="receiver" class="form-control" placeholder="Nhập tên người nhận">
+        </div>
+        <div class="col-md-3 mb-3 mb-md-0">
+            <label for="address" class="form-label">Địa chỉ</label>
+            <input type="text" id="address" name="address" class="form-control" placeholder="Nhập địa chỉ">
+        </div>
+        <div class="col-md-3 mb-3 mb-md-0 d-flex align-items-end h-100">
+            <button type="submit" class="btn btn-primary w-100">Lọc và Sắp xếp</button>
+        </div>    
+    </form>
+</div>
+
+
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-success" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Hiển thị đơn hàng -->
+<div class="container mt-4">
+    <hr style="border: none; border-top: 5px solid red; width: 100%;">
+    {% for order in order_data %}
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Tổng thanh toán: </strong>
+                    <strong class="text-danger ms-2">{{ order.total|floatformat:2 }}đ</strong>
+                    <br>
+                    <strong>Người nhận:</strong> {{ order.receiver }}<br>
+                    <strong>Địa chỉ:</strong> {{ order.address }}<br>
+                </div>
+            
+            <div>
+            <form method="post" action="{% url 'update_order_status' order.id %}" class="d-flex align-items-center">
+                {% csrf_token %}
+                <select name="status" class="form-select me-2 w-100">
+                    <option value="pending" {% if order.status == "pending" %}selected{% endif %}>
+                        Chờ xác nhận
+                    </option>
+                    <option value="shipping" {% if order.status == "shipping" %}selected{% endif %}>
+                        Chờ giao hàng
+                    </option>
+                    <option value="completed" {% if order.status == "completed" %}selected{% endif %}>
+                        Đã hoàn thành
+                    </option>
+                </select>
+                <button type="submit" class="btn btn-primary btn-sm w-50">Cập nhật</button>
+            </form>
+            </div>
+        </div>
+        </div>
+        <div class="card-body">
+            {% for item in order.items %}
+            <div class="row align-items-center mb-3">
+                <div class="col-md-2">
+                    <img src="{{ item.image_url }}" alt="Sản phẩm" class="img-fluid">
+                </div>
+                <div class="col-md-7">
+                    <h5>{{ item.product_name }}</h5>
+                    <p class="text-muted">Số lượng: x{{ item.quantity }}</p>
+                    <p>Thành tiền: <strong class="text-danger">{{ item.total_price|floatformat:2 }}đ</strong></p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Tài khoản thực hiện:</strong> {{ order.customer }}<br>
+                </div>
+                <div>
+                    <strong>Ngày thực hiện:</strong> {{ order.date_order|date:"d/m/Y H:i" }}<br>
+                    <strong>Số điện thoại:</strong> {{ order.mobile }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr style="border: none; border-top: 5px solid red; width: 100%;">
+    {% endfor %}
+</div>
+{% endblock order_manage %}

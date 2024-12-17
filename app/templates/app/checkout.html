@@ -1,0 +1,52 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block content_checkout %}
+     <div class="row" style="width:100%">
+		<div class="col-lg-6">
+			<div class="box-element" id="form-wrapper">
+				<form id="form" method="POST" action="">
+					{% csrf_token %}
+					{% if error_message %}
+						<div class="alert alert-danger">{{ error_message }}</div>
+					{% endif %}
+					<div id="shipping-info">
+						<hr>
+						<p>Thông tin vận chuyển:</p>
+						<hr>
+						<div class="form-field w-100">
+							<input required class="form-control" type="text" name="name" placeholder="Tên.." value="{{ request.POST.name }}">
+						</div>
+						<div class="form-field w-100">
+							<input required class="form-control" type="text" name="mobile" placeholder="Số điện thoại.." value="{{ request.POST.mobile }}">
+						</div>
+						<div class="form-field w-100">
+							<input class="form-control" type="text" name="address" placeholder="Địa chỉ (Số nhà, Số đường, Quận, Thành phố).." value="{{ request.POST.address }}">
+						</div>
+					</div>
+					<hr>
+					<input id="form-button" class="btn btn-success btn-block" type="submit" value="Tiếp tục">
+				</form>
+			</div>
+		</div>
+		
+
+		<div class="col-lg-6">
+			<div class="box-element">
+				<a  class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190; Quay về giỏ hàng</a>
+				<hr>
+				<h3>Thông tin đơn hàng</h3>
+				<hr>
+				{% for item in items %}
+				<div class="cart-row">
+					<div style="flex:2"><img class="row-image" src="{{item.product.ImageURL}}"></div>
+					<div style="flex:2"><p>{{item.product.name}}</p></div>
+					<div style="flex:1"><p>{{item.product.price | floatformat:0}} VNĐ</p></div>
+					<div style="flex:1"><p>x{{item.quantity}}</p></div>
+				</div>
+				{% endfor %}
+				<h5>Tổng số lượng mặt hàng: <strong>{{order.get_cart_items}}</strong></h5>
+				<h5>Tổng giá tiền: <strong>{{order.get_cart_total | floatformat:0}} VNĐ</strong></h5>
+			</div>
+		</div>
+	</div>
+{% endblock content_checkout %}

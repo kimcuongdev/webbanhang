@@ -1,0 +1,33 @@
+{% extends "app/base.html" %}
+{% block product_manage %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand">Quản lý mặt hàng</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'product_add' %}">Thêm mặt hàng mới</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class = "container">
+    <div class="row" style="width:100%">
+      {% for product in products %}
+      <div class="col-lg-3 mb-4">
+        <img class="thumbnail img-fluid" src="{{product.ImageURL}}">
+        <div class="box-element product text-center">
+          <h6><strong>{{product.name}}</strong></h6>
+          <h5><strong>{{product.price | floatformat:0}} VNĐ</strong></h5>
+          <hr>
+          <a class="btn btn-outline-secondary" href="{% url 'product_modify' product.id %}">Chỉnh sửa thông tin</a>
+        </div>
+      </div>
+      {% endfor %} 
+    </div>
+</div>
+{% endblock product_manage %}

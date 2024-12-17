@@ -1,0 +1,40 @@
+{% extends "app/base.html" %}
+{% block product_add %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <span class="navbar-brand fs-4">Thêm mặt hàng mới</span>
+    </div>
+</nav>
+
+<div class="container ">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="category" class="form-label fs-5">Danh mục mặt hàng</label>
+            <select id="category" name="category" class="form-select">
+                {% for category in select_categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+            <a href = "{% url "add_new_category" %}"> Thêm danh mục mới </a>
+        </div>
+
+        <div class="mb-3">
+            <label for="name" class="form-label fs-5">Tên mặt hàng</label>
+            <input type="text" id="name" name="name" class="form-control" placeholder="Nhập tên mặt hàng" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="price" class="form-label fs-5">Giá tiền</label>
+            <input type="number" id="price" name="price" class="form-control" placeholder="Nhập giá mặt hàng" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="image" class="form-label fs-5">Ảnh</label>
+            <input type="file" id="image" name="image" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary fs-5">Xác nhận</button>
+    </form>
+</div>
+{% endblock product_add %}
