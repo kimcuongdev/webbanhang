@@ -22,4 +22,5 @@ urlpatterns = [
     path('product_modify/<int:product_id>/',views.modifyProduct, name='product_modify'),
     path('product_add', views.addProduct, name='product_add'),
     path("add_new_category/", views.addNewCategory, name="add_new_category"),
+    path('about_us/',views.aboutUs,name='about_us'),
 ]

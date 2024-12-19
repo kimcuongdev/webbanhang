@@ -2,18 +2,20 @@
 {% load static %}
 {% block search %}
     <h5> Hiển thị kết quả cho {{searched}} </h5>
-    <div class="row d-flex justify-content-between" style="width:100%">
-    {% for product in keys %}
-    <div class="col-lg-3 mb-4">
-        <img class="thumbnail img-fluid" src="{{product.ImageURL}}">
-        <div class="box-element product">
-          <h6 style="text-align: center;"><strong>{{product.name}}</strong></h6>
-          <h5 style="text-align: center;"><strong>{{product.price | floatformat:0}} VNĐ</strong></h5>
-          <hr>
-          <button data-product={{product.id}} data-action = "add" class="btn btn-outline-secondary add-btn update-cart">Thêm vào giỏ hàng</button>
-          <a class="btn btn-outline-success" href="#">Xem</a>
+    <div class = "container">
+      <div class="row" style="width:100%; background-color: #FFCC00; ">
+      {% for product in keys %}
+        <div class="col-lg-3 mb-4">
+          <img class="thumbnail img-fluid" src="{{product.ImageURL}}">
+          <div style = "background-color: #ed5605" class="box-element product text-center">
+            <h6 style="text-align: center; color:#fff;"><strong>{{product.name}}</strong></h6>
+            <h5 style="text-align: center; color:#fff;"><strong>{{product.price | floatformat:0}} VNĐ</strong></h5>
+            <hr>
+            <button data-product={{product.id}} data-action = "add" class="btn btn-warning add-btn update-cart">Thêm vào giỏ hàng</button>
+          </div>
         </div>
+      {% endfor %}
+      </div>
     </div>
-    {% endfor %}
 {% endblock search %}
 

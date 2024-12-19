@@ -1,8 +1,8 @@
 {% extends "app/base.html" %}
 {% block product_manage %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <a class="navbar-brand">Quản lý mặt hàng</a>
+<nav style="background-color: #FFCC00; " class="navbar navbar-expand-lg ">
+    <div  class="container-fluid">
+        <a class="navbar-brand fs-4">Quản lý mặt hàng</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -15,16 +15,28 @@
         </div>
     </div>
 </nav>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <form method="GET" action="{% url 'product_manage' %}">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Tìm kiếm tên sản phẩm..." name="search_query" value="{{ request.GET.search_query }}">
+                    <button class="btn btn-outline-secondary ms-2" type="submit">Tìm kiếm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <div class = "container">
-    <div class="row" style="width:100%">
+    <div class="row" style="width:100%; background-color: #FFCC00; ">
       {% for product in products %}
       <div class="col-lg-3 mb-4">
         <img class="thumbnail img-fluid" src="{{product.ImageURL}}">
-        <div class="box-element product text-center">
-          <h6><strong>{{product.name}}</strong></h6>
-          <h5><strong>{{product.price | floatformat:0}} VNĐ</strong></h5>
+        <div style = "background-color: #ed5605" class="box-element product text-center">
+          <h6 style="text-align: center; color:#fff;"><strong>{{product.name}}</strong></h6>
+          <h5 style="text-align: center; color:#fff;"><strong>{{product.price | floatformat:0}} VNĐ</strong></h5>
           <hr>
-          <a class="btn btn-outline-secondary" href="{% url 'product_modify' product.id %}">Chỉnh sửa thông tin</a>
+          <a class="btn btn-danger" href="{% url 'product_modify' product.id %}">Chỉnh sửa thông tin</a>
         </div>
       </div>
       {% endfor %} 

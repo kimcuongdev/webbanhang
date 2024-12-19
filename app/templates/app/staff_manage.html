@@ -1,7 +1,23 @@
 {% extends "app/base.html" %}
 {% block staff_manage %}
-<div class="container mt-5">
-    <h2>Quản lý nhân viên</h2>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand">Quản lý nhân viên</a>
+    </div>
+</nav>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <form method="GET" action="{% url 'staff_manage' %}">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Tìm kiếm username..." name="search_query" value="{{ request.GET.search_query }}">
+                    <button class="btn btn-outline-secondary ms-2" type="submit">Tìm kiếm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container mt-3">
     <form method="post" action="{% url 'staff_manage' %}">
         {% csrf_token %}
         <table class="table table-bordered">
@@ -25,7 +41,9 @@
                 {% endfor %}
             </tbody>
         </table>
-        <button type="submit" class="btn btn-primary">Cập nhật</button>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Cập nhật</button>
+        </div>
     </form>
 </div>
 {% endblock staff_manage %}

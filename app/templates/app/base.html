@@ -42,8 +42,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="">
     </head>
-    <body>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <body style="background-color: #FFCC00">
+        <nav class="navbar navbar-expand-lg" style="background-color: #FFCC00;">
             <div class="container-fluid">
               <a class="navbar-brand" href='{% url 'home' %}'>
                 <img  src="{% static 'app/images/Los_Pollos_Hermanos_logo.png' %}" width = "50" height="50">
@@ -56,18 +56,18 @@
                   <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href='{% url 'home' %}'>Trang chủ</a>
                   </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url "about_us" %}">Về Los Pollos</a>
+                  </li>
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      Sản phẩm
+                      Món ngon
                     </a>
                     <ul class="dropdown-menu">
                       {% for category in categories %}
                       <li><a class="dropdown-item dropright" href="{% url "category" %}?category={{category.slug}}">{{category.name}}</a></li>
                       {% endfor %}
                     </ul>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Giới thiệu</a>
                   </li>
                   <li class="nav-item dropdown">
                     <a style = "visibility: {{manage_option}}" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -85,8 +85,8 @@
 
                 <form class="d-flex" role="search" method = "POST" action = "{% url "search" %}">
                   {% csrf_token %}
-                  <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name = "searched">
-                  <button class="btn btn-outline-warning" type="submit">Search</button>
+                  <input class="form-control me-2" type="search" placeholder="Tìm kiếm món ngon" aria-label="Search" name = "searched">
+                  <button class="btn btn-outline-danger text-nowrap" type="submit">Tìm kiếm</button>
                 </form>
 
                 <div class=" ms-2 form-inline my-2 my-lg-0 d-flex align-items-center" style = "visibility:{{logout_button}}">
@@ -109,6 +109,8 @@
         </nav>
       </nav>
         <!--main body-->
+        <div style = "min-height: 50vh; padding-bottom: 50px;">
+        {% block about_us %}{% endblock about_us %}
         {% block slider_banner %}{% endblock slider_banner %}
         {% block main-content %}{% endblock main-content %}
         {% block cart_content %}{% endblock cart_content %}
@@ -123,9 +125,18 @@
         {% block product_modify %}{% endblock product_modify %}
         {% block product_add %}{% endblock product_add %}
         {% block add_new_category %}{% endblock add_new_category %}
-        </br></br></br>
+        </div>
         <!--footer-->
-        <footer class="container-fluid bg-success text-center fixed-bottom p-2 mt-5">From Alberqueque</footer>
+        <footer class="bg-danger text-white text-center">
+          <div class="container py-4">
+              <p class="mb-1">FOR EDUCATION PURPOSES</p>
+              <p class="mb-1"><strong>Los Pollos Hermanos</strong></p>
+              <p class="mb-1">Cơ sở 1: Albuquerque, New Mexico, USA (Only on Netflix)</p>
+              <p class="mb-1">Cơ sở 2: HUST, Hai Ba Trung, Hanoi, Viet Nam (Only on localhost)</p>
+              <p class="mb-1">&copy; 2024.1 CuongNK 20224939 Project I. All Right Reserved.</p>
+          </div>
+          <img src="{% static 'app/images/footer_img.png' %}">
+        </footer>
         <script src="" async defer></script>
         <script src="{% static 'app/js/cart.js' %}"></script>
     </body>

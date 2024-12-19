@@ -13,6 +13,29 @@ from django.utils.text import slugify
 
 
 # Create your views here.
+def getOrderData(orders):
+    order_data = []
+    for order in orders:
+        shipping_address = ShippingAddress.objects.filter(order=order).first()
+        items = order.orderitem_set.all()
+        order_data.append({
+            'id': order.id,
+            'total': order.get_cart_total,
+            'status': get_status_display(order.status),
+            'status_class': get_status_class(order.status),
+            'date_order': order.date_order,
+            'customer': order.customer,
+            'receiver': shipping_address.name if shipping_address else 'N/A',
+            'mobile': shipping_address.mobile if shipping_address else 'N/A',
+            'address': shipping_address.address if shipping_address else 'N/A',
+            'items': [{
+                'product_name': item.product.name if item.product else 'Sản phẩm không tồn tại',
+                'quantity': item.quantity,
+                'total_price': item.get_total,
+                'image_url': item.product.image.url if item.product and item.product.image else '',
+            } for item in items]
+        })
+    return order_data
 #Helper-function hiển thị màu tương ứng trạng thái đơn hàng
 def get_status_class(status):
     status_classes = {
@@ -149,6 +172,7 @@ def search(request):
 #Giao diện đăng ký
 def register(request):
     print('register')
+    visibility_context = get_visibility_context(request.user)
     cart_icon = 'hidden'
     logout_button = 'hidden'
     login_and_register_button = 'hidden'
@@ -164,7 +188,8 @@ def register(request):
                'logout_button':logout_button, 
                'cart_icon':cart_icon,
                'don_hang':'hidden',
-               'manage_option':'hidden'}
+               'manage_option':'hidden',
+               **visibility_context}
     return render(request,"app/register.html",context)
 #Hết giao diện đăng ký
 
@@ -176,6 +201,7 @@ def register(request):
 
 #Giao diện đăng nhập
 def loginPage(request):
+    visibility_context = get_visibility_context(request.user)
     print('login')
     cart_icon = 'hidden'
     if request.user.is_authenticated:
@@ -196,7 +222,8 @@ def loginPage(request):
                'logout_button':logout_button, 
                'cart_icon': cart_icon,
                'don_hang':'hidden',
-               'manage_option':'hidden'}
+               'manage_option':'hidden',
+               **visibility_context}
     return render(request,"app/login.html",context)
 #Hết giao diện đăng nhập
 
@@ -348,63 +375,46 @@ def updateItem(request):
 #Giao diện xem thông tin đơn hàng
 @login_required
 def showOrderInfo(request, slug=None):  # Thêm giá trị mặc định cho slug
-    # Ánh xạ trạng thái với slug
-    slug_to_status = {
-        'tat-ca': None,  # Không lọc, lấy tất cả đơn hàng
-        'chua-hoan-thanh': 'cart',
-        'cho-xac-nhan': 'pending',
-        'cho-giao-hang': 'shipping',
-        'da-hoan-thanh': 'completed',
-    }
-    
-    # Nếu slug không có, mặc định là 'tat-ca'
-    if slug is None:
-        slug = 'tat-ca'
-    
-    # Lấy trạng thái tương ứng với slug
-    status_filter = slug_to_status.get(slug)
-    
-    # Lấy danh sách đơn hàng dựa trên trạng thái
     orders = Order.objects.filter(customer=request.user).order_by('-date_order')
-    if status_filter:  # Nếu có trạng thái cụ thể
-        orders = orders.filter(status=status_filter)
+    if slug == 'chua-hoan-thanh':
+        orders = orders.filter(status='cart')
+    elif slug == 'cho-xac-nhan':
+        orders = orders.filter(status='pending')
+    elif slug == 'cho-giao-hang':
+        orders = orders.filter(status='shipping')
+    elif slug == 'da-hoan-thanh':
+        orders = orders.filter(status='completed')
     
-    # Chuẩn bị dữ liệu cho template
-    order_data = []
-    for order in orders:
-        # print(order.shippingaddress_set.all())
-        shipping_address = order.shippingaddress_set.first()
-        receiver = ''
-        if shipping_address:
-            receiver = shipping_address.name
-        if order.get_cart_items == 0:
-            continue
-        items = order.orderitem_set.all()
-        order_data.append({
-            'transaction_id': order.transaction_id,
-            'date_order': order.date_order,
-            'receiver': receiver,
-            'status': get_status_display(order.status),
-            'status_class': get_status_class(order.status),
-            'total': order.get_cart_total,
-            'items': [{
-                'product_name': item.product.name,
-                'quantity': item.quantity,
-                'total_price': item.get_total,
-                'image_url': item.product.image.url if item.product.image else 'https://via.placeholder.com/100',
-            } for item in items],
-        })
+    if request.method == 'POST':
+        start_date = request.POST.get("start_date")
+        end_date = request.POST.get("end_date")
+        sort_by = request.POST.get("sort_by", "newest")
+        receiver = request.POST.get('receiver','').strip()
+        address = request.POST.get('address','').strip()
+        if receiver:
+            orders = orders.filter(shippingaddress__name__icontains=receiver)
+        if address:
+            orders = orders.filter(shippingaddress__address__icontains=address)
+        if start_date:
+            orders = orders.filter(date_order__gte=start_date)
+        if end_date:
+            orders = orders.filter(date_order__lte=end_date)
+        if sort_by == "newest":
+            orders = orders.order_by("-date_order")
+        elif sort_by == "oldest":
+            orders = orders.order_by("date_order")
+    order_data = getOrderData(orders)
     visibility_context = get_visibility_context(request.user)
     context = {
         **visibility_context,
         'order_data': order_data,
         'slug': slug,  # Truyền slug vào template
-
     }
     return render(request, 'app/order_info.html', context)
 #Hết giao diện xem thông tin đơn hàng
 
 #Giao diện quản lý đơn hàng
+
 #Hiển thị quản lý
 def manageOrder(request,slug=None):
     if slug == 'cho-xac-nhan':
@@ -415,27 +425,32 @@ def manageOrder(request,slug=None):
         orders = Order.objects.filter(status='completed')
     else:  # Default: 'tat-ca'
         orders = Order.objects.exclude(status='cart')
-    order_data = []
-    for order in orders:
-        shipping_address = ShippingAddress.objects.filter(order=order).first()
-        items = order.orderitem_set.all()
-        order_data.append({
-            'id': order.id,
-            'total': order.get_cart_total,
-            'status': order.status,
-            'status_class': get_status_class(order.status),
-            'date_order': order.date_order,
-            'customer': order.customer,
-            'receiver': shipping_address.name if shipping_address else 'N/A',
-            'mobile': shipping_address.mobile if shipping_address else 'N/A',
-            'address': shipping_address.address if shipping_address else 'N/A',
-            'items': [{
-                'product_name': item.product.name if item.product else 'Sản phẩm không tồn tại',
-                'quantity': item.quantity,
-                'total_price': item.get_total,
-                'image_url': item.product.image.url if item.product and item.product.image else '',
-            } for item in items]
-        })
+    if request.method == "POST":
+        receiver = request.POST.get("receiver", "").strip()
+        user = request.POST.get("user", "").strip()
+        address = request.POST.get("address", "").strip()
+        start_date = request.POST.get("start_date")
+        end_date = request.POST.get("end_date")
+        sort_by = request.POST.get("sort_by", "newest")
+        
+        # Lọc theo các trường nếu có giá trị
+        if receiver:
+            orders = orders.filter(shippingaddress__name__icontains=receiver)
+        if user:
+            orders = orders.filter(customer__username__icontains=user)
+        if address:
+            orders = orders.filter(shippingaddress__address__icontains=address)
+        if start_date:
+            orders = orders.filter(date_order__gte=start_date)
+        if end_date:
+            orders = orders.filter(date_order__lte=end_date)
+        
+        # Sắp xếp
+        if sort_by == "newest":
+            orders = orders.order_by("-date_order")
+        elif sort_by == "oldest":
+            orders = orders.order_by("date_order")
+    order_data = getOrderData(orders)
     visibility_context = get_visibility_context(request.user)
     context={
         'order_data': order_data,
@@ -452,14 +467,15 @@ def update_order_status(request, order_id):
         order.save()
         messages.success(request, "Trạng thái đơn hàng đã được cập nhật.")
     return redirect('order_manage', slug='tat-ca')
-#Filter
-
 ##Hết giao diện quản lý đơn hàng
 
 ##Giao diên quản lý mặt hàng
 def manageProduct(request):
     visibility_context = get_visibility_context(request.user)
     products = Product.objects.all()
+    search_query = request.GET.get('search_query', '')
+    if search_query:
+        products = Product.objects.filter(name__icontains=search_query)
     context={
         'products':products,
         **visibility_context
@@ -547,7 +563,9 @@ def manageStaff(request):
 
     # Lấy danh sách tất cả tài khoản
     users = User.objects.exclude(username='admin')
-
+    search_query = request.GET.get('search_query', '')
+    if search_query:
+        users =  users.filter(username__icontains=search_query)
     if request.method == 'POST':
         for user in users:
             permission = request.POST.get(f'permissions_{user.id}')
@@ -564,3 +582,11 @@ def manageStaff(request):
     }
     return render(request, 'app/staff_manage.html', context)
 ##Hết giao diện quản lý nhân viên
+
+##About Us
+def aboutUs(request):
+    visibility_context = get_visibility_context(request.user)
+    context = {
+        **visibility_context
+    }
+    return render(request,'app/about_us.html', context)

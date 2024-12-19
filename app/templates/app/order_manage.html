@@ -1,8 +1,8 @@
 {% extends "app/base.html" %}
 {% block order_manage %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav style="background-color: #FFCC00; " class="navbar navbar-expand-lg">
     <div class="container-fluid">
-        <a class="navbar-brand">Quản lý đơn hàng</a>
+        <span class="navbar-brand fs-4">Quản lý đơn hàng</span>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -27,39 +27,38 @@
 
 <!-- Lọc và sắp xếp -->
 <div class="container mt-4">
-    <form method="POST" action="{% url 'order_manage' slug %}" class="row align-items-end mb-4">
+    <form method="POST" class="row align-items-end mb-4">
         {% csrf_token %}
-        
         <div class="col-md-3 mb-3 mb-md-0">
             <label for="start_date" class="form-label">Ngày bắt đầu</label>
-            <input type="date" id="start_date" name="start_date" class="form-control" value="{{ request.GET.start_date }}">
+            <input type="date" id="start_date" name="start_date" class="form-control" value="{{ request.POST.start_date }}">
         </div>
         <div class="col-md-3 mb-3 mb-md-0">
             <label for="end_date" class="form-label">Ngày kết thúc</label>
-            <input type="date" id="end_date" name="end_date" class="form-control" value="{{ request.GET.end_date }}">
+            <input type="date" id="end_date" name="end_date" class="form-control" value="{{ request.POST.end_date }}">
         </div>
         <div class="col-md-3 mb-3 mb-md-0">
             <label for="sort_by" class="form-label">Sắp xếp theo</label>
             <select id="sort_by" name="sort_by" class="form-select">
-                <option value="newest" {% if request.GET.sort_by == 'newest' %}selected{% endif %}>Mới nhất</option>
-                <option value="oldest" {% if request.GET.sort_by == 'oldest' %}selected{% endif %}>Cũ nhất</option>
+                <option value="oldest" {% if request.POST.sort_by == 'oldest' %}selected{% endif %}>Cũ nhất</option>
+                <option value="newest" {% if request.POST.sort_by == 'newest' %}selected{% endif %}>Mới nhất</option>
             </select>
         </div>
         <div class="col-md-3 mb-3">
-            <!-- Cột 4 trống hàng 1 -->
+            
         </div>
         
         <div class="col-md-3 mb-3 mb-md-0">
             <label for="account" class="form-label">Tài khoản thực hiện</label>
-            <input type="text" id="account" name="account" class="form-control" placeholder="Nhập tài khoản">
+            <input type="text" id="user" name="user" class="form-control" placeholder="Nhập tài khoản" value="{{ request.POST.user }}">
         </div>
         <div class="col-md-3 mb-3 mb-md-0">
             <label for="receiver" class="form-label">Người nhận</label>
-            <input type="text" id="receiver" name="receiver" class="form-control" placeholder="Nhập tên người nhận">
+            <input type="text" id="receiver" name="receiver" class="form-control" placeholder="Nhập tên người nhận" value="{{ request.POST.receiver }}">
         </div>
         <div class="col-md-3 mb-3 mb-md-0">
             <label for="address" class="form-label">Địa chỉ</label>
-            <input type="text" id="address" name="address" class="form-control" placeholder="Nhập địa chỉ">
+            <input type="text" id="address" name="address" class="form-control" placeholder="Nhập địa chỉ" value="{{ request.POST.address }}">
         </div>
         <div class="col-md-3 mb-3 mb-md-0 d-flex align-items-end h-100">
             <button type="submit" class="btn btn-primary w-100">Lọc và Sắp xếp</button>
@@ -92,7 +91,6 @@
                     <strong>Người nhận:</strong> {{ order.receiver }}<br>
                     <strong>Địa chỉ:</strong> {{ order.address }}<br>
                 </div>
-            
             <div>
             <form method="post" action="{% url 'update_order_status' order.id %}" class="d-flex align-items-center">
                 {% csrf_token %}

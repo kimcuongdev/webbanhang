@@ -1,0 +1,79 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block about_us %}
+<div class="container">
+    <div class="d-flex justify-content-center">
+        <img src = "{% static 'app/images/our_history.png' %}">
+    </div>
+    <div class="row g-4">
+        <!-- Column 1 -->
+        <div class="col-md-6 d-flex flex-column align-items-center">
+            <div class="text-box bg-light rounded mb-3 p-3 text-primary">
+                <p>
+                    <strong>Los Pollos Hermanos là một chuỗi nhà hàng gia đình bình dân phát triển nhanh chóng, 
+                    được thành lập bởi Gus Fring và đối tác kinh doanh của ông, Max Arciniega. 
+                    <br>
+                    Cùng nhau, hai "anh em gà" đã tạo dựng tên tuổi cho mình và quán ăn nhỏ tại thị trấn 
+                    bằng cách sử dụng hương vị và gia vị đậm chất truyền thống để chế biến món gà ngon nhất ở phía nam biên giới.
+                    </strong>
+                </p>
+            </div>
+            <img src="{% static 'app/images/history-1.jpg' %}" alt="Historic Image 1" class="img-fluid rounded">
+        </div>
+        <!-- Column 2 -->
+        <div class="col-md-6 d-flex flex-column align-items-center">
+            <img src="{% static 'app/images/history-2.jpg' %}" alt="Historic Image 2" class="img-fluid rounded">
+            <div class="text-box bg-light rounded mt-3 p-3 text-primary">
+                <p>
+                    <strong>
+                    Kể từ đó, Los Pollos Hermanos đã mở cửa tại Hoa Kỳ, 
+                    phục vụ các gia đình giống như gia đình bạn. 
+                    Và chúng tôi mong muốn tiếp tục phát triển!
+                    </strong>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        <img src = "{% static 'app/images/value_culture.png' %}">
+    </div>
+
+    <div class="row g-4">
+        <!-- Column 1 -->
+        <div class="col-md-6 d-flex flex-column align-items-center">
+            <img src="{% static 'app/images/culture-1.jpg' %}" alt="Historic Image 1" class="img-fluid rounded">
+            <div class="text-box bg-light rounded mt-3 p-3 text-primary">
+                <p>
+                    <strong>Los Pollos Hermanos biết hương vị gia đình như thế nào 
+                        và chúng tôi mang sự ấm áp và tốt lành đó vào thức ăn của mình mỗi ngày.
+                        <br>
+                        <br>
+                        Chúng tôi luôn có món ngon phục vụ, có thể là gà rán giòn,
+                        khoai tây chiên xoắn cay mới hoặc nước sốt đặc biệt.
+                    </strong>
+                </p>
+            </div>
+        </div>
+        <!-- Column 2 -->
+        <div class="col-md-6 d-flex flex-column align-items-center">
+            <div class="text-box bg-light rounded mb-3 p-3 text-primary">
+                <p>
+                    <strong>
+                    Chúng tôi biết rằng tầm quan trọng của một bữa ăn gia đình đối với mọi người, 
+                    và chúng tôi luôn trân trọng những giá trị đó. 
+                    <br>
+                    Mỗi bữa ăn chúng tôi mang đến cho bạn sẽ THƠM NGON, ẤM ÁP, TƯƠI MỚI, tràn đầy TÌNH YÊU và SỰ CHĂM SÓC.
+                    <br>
+                    Đó là lời hứa của chúng tôi dành cho bạn.
+                    <br>
+                    <br> 
+                    Phương châm của chúng tôi: "Los Pollos Hermanos! Hãy nếm thử gia đình!"
+                    </strong>
+                </p>
+            </div>
+            <img src="{% static 'app/images/culture-2.jpg' %}" alt="Historic Image 2" class="img-fluid rounded">
+        </div>
+    </div>
+</div>
+{% endblock about_us %}
